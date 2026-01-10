@@ -1,0 +1,5 @@
+fastapi
+transformers
+sentence-transformers
+redis
+locust

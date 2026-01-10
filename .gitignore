@@ -1,0 +1,58 @@
+# =====================
+# Python
+# =====================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# =====================
+# Virtual Environment
+# =====================
+env/
+venv/
+.venv/
+
+# =====================
+# Environment Variables
+# =====================
+.env
+.env.*
+
+# =====================
+# ML / Model Artifacts
+# =====================
+models/
+checkpoints/
+*.bin
+*.pt
+*.ckpt
+*.onnx
+
+# =====================
+# Logs & Outputs
+# =====================
+logs/
+*.log
+
+# =====================
+# Jupyter / Colab
+# =====================
+.ipynb_checkpoints/
+
+# =====================
+# OS Files (Mac)
+# =====================
+.DS_Store
+
+# =====================
+# Docker
+# =====================
+*.pid
+
+# PyCharm
+.idea/
+*.iml
+
