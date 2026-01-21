@@ -24,12 +24,13 @@ venv/
 # =====================
 # ML / Model Artifacts
 # =====================
-models/
-checkpoints/
+
 *.bin
 *.pt
 *.ckpt
 *.onnx
+*.safetensors
+model_checkpoints/
 
 # =====================
 # Logs & Outputs
