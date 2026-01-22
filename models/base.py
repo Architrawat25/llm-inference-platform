@@ -35,7 +35,3 @@ class BaseModel(ABC):
 
     async def warmup(self) -> Optional[bool]:
         return None
-
-
-
-
