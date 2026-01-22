@@ -1,4 +1,4 @@
-from models.base import BaseModel
+from models.base import BaseModel, ModelInferenceError
 import asyncio
 import random
 
@@ -14,20 +14,20 @@ class LargeModel(BaseModel):
         self.failure_rate = failure_rate
 
     async def _generate(self, prompt: str, max_tokens: int):
+        try:
 
-        latency = random.uniform(self.min_latency, self.max_latency)
+            latency = random.uniform(self.min_latency, self.max_latency)
 
-        await asyncio.sleep(latency)
-        '''
-        asyncio.sleep() pauses the function without doing any work
-        It uses 0% CPU. It’s just a countdown.
-        '''
+            await asyncio.sleep(latency)
+            '''
+            asyncio.sleep() pauses the function without doing any work
+            It uses 0% CPU. It’s just a countdown.
+            '''
 
-        if random.random() < self.failure_rate:
-            raise RuntimeError("Large model failure")
+            if random.random() < self.failure_rate:
+                raise RuntimeError("Large model failure")
 
-        return f"[large model response] {prompt}"
+            return f"[large model response] {prompt}"
 
-
-
-
+        except Exception as e:
+            raise ModelInferenceError (f"large model inference failed {str(e)}")

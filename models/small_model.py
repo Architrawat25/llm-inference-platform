@@ -1,4 +1,4 @@
-from models.base import BaseModel
+from models.base import BaseModel, ModelInferenceError
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 import asyncio
@@ -33,22 +33,27 @@ class SmallModel(BaseModel):
             '''
 
     async def _generate(self, prompt: str, max_tokens: int) -> str:
+        try:
 
-        self._load_model()
+            self._load_model()
 
-        inputs = self.tokenizer(prompt, return_tensors='pt').to(self.device)
+            inputs = self.tokenizer(prompt, return_tensors='pt').to(self.device)
 
-        with torch.no_grad():
-            outputs = self.model.generate(**inputs,
-                                         max_new_tokens = max_tokens,
-                                         do_sample = True,
-                                         temprature = 0.7)
+            with torch.no_grad():
+                outputs = self.model.generate(**inputs,
+                                            max_new_tokens = max_tokens,
+                                            do_sample = True,
+                                            temprature = 0.7)
 
-        generated_text = self.tokenizer.decode(
-            outputs[0],
-            skip_special_tokens=True
-        )
-        return generated_text
+            generated_text = self.tokenizer.decode(
+                outputs[0],
+                skip_special_tokens=True
+            )
+            return generated_text
+
+        except Exception as e:
+            raise ModelInferenceError(f"small model inference failed {str(e)}")
+
 
     async def warmup(self):
         self._load_model()

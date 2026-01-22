@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import time
 from typing import Optional
 
+class ModelInferenceError(Exception):
+    pass
 
 class BaseModel(ABC):
 
