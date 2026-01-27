@@ -3,3 +3,4 @@ transformers
 sentence-transformers
 redis
 locust
+uvicorn==0.40.0
