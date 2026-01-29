@@ -7,10 +7,11 @@ class RoutingError(Exception):
 
 class SemanticRouter:
 
-    def __init__(self, embedder: Embedder, intent_embeddings: dict[str, dict[str, Any]] ,similarity_threshold: float = 0.6, default_model: str = "small"):
+    def __init__(self, embedder: Embedder, intent_embeddings: dict[str, dict[str, Any]] ,
+                 threshold: float = 0.6, default_model: str = "small"):
         self.embedder = embedder
         self.intent_embeddings = intent_embeddings
-        self.similarity_threshold = similarity_threshold
+        self.threshold = threshold
         self.default_model = default_model
 
     def cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
@@ -45,13 +46,13 @@ class SemanticRouter:
                 best_intent = intent_name
                 best_model = data["target_model"]
 
-            #fallback to default model
-            if best_score < self.similarity_threshold:
-                return {
-                    "model": self.default_model,
-                    "intent": None,
-                    "score": best_score,
-                }
+        #fallback to default model
+        if best_score < self.threshold:
+            return {
+                "model": self.default_model,
+                "intent": None,
+                "score": best_score,
+            }
 
         return {
             "model": best_model,
