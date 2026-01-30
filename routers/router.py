@@ -7,11 +7,10 @@ class RoutingError(Exception):
 
 class SemanticRouter:
 
-    def __init__(self, embedder: Embedder, intent_embeddings: dict[str, dict[str, Any]] ,
-                 threshold: float = 0.6, default_model: str = "small"):
+    def __init__(self, embedder: Embedder, intent_embeddings: dict[str, dict[str, Any]],
+                  default_model: str = "small"):
         self.embedder = embedder
         self.intent_embeddings = intent_embeddings
-        self.threshold = threshold
         self.default_model = default_model
 
     def cosine_similarity(self, vec1: np.ndarray, vec2: np.ndarray) -> float:
@@ -24,11 +23,12 @@ class SemanticRouter:
     def route(self, prompt: str) -> dict[str, Any]:
         try:
             prompt_embedding = self.embedder.embed(prompt)
+
         except EmbeddingError:
             #fallback to default model
             return {
                 "model": self.default_model,
-                "intent": None,
+                "intent": "fallback_to_default_model",
                 "score": 0.0
             }
 
@@ -36,22 +36,24 @@ class SemanticRouter:
         best_score = -1
         best_model = None
 
-        for intent_name, data in self.intent_embeddings.items():
-            intent_embedding = data["embedding"]
+        for intent_name, intent_data in self.intent_embeddings.items():
 
-            score = self.cosine_similarity(prompt_embedding, intent_embedding)
+            centroid = intent_data["centroid"]
+            target_model = intent_data["target_model"]
+            threshold = intent_data["threshold"]
 
-            if score > best_score:
+            score = self.cosine_similarity(prompt_embedding, centroid)
+
+            if score >= threshold and score > best_score:
                 best_score = score
                 best_intent = intent_name
-                best_model = data["target_model"]
+                best_model = target_model
 
-        #fallback to default model
-        if best_score < self.threshold:
+        if best_intent is None:
             return {
                 "model": self.default_model,
-                "intent": None,
-                "score": best_score,
+                "intent": "below_threshold_fallback",
+                "score": max(best_score, 0.0)
             }
 
         return {
