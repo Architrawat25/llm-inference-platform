@@ -4,3 +4,4 @@ redis
 locust
 uvicorn==0.40.0
 mlx-lm
+python-dotenv
